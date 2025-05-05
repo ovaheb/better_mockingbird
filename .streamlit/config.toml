@@ -1,0 +1,7 @@
+[theme]
+base = "dark"
+primaryColor = "#ec161d"        # Red from REDspace logo
+backgroundColor = "#212121"     # White
+secondaryBackgroundColor = "#171717"  # For cards/boxes
+textColor = "#ffffff"           # White text
+font = "sans serif"
