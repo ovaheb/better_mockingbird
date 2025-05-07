@@ -82,7 +82,30 @@ if st.session_state.get("audio_path") and not st.session_state.get("transcript_c
         st.stop()
 
 if st.session_state.get("transcript_complete"):
-    st.text_area("📝 Whisper Output:", st.session_state.get("hypotheses", [])[0])
+    hypotheses = st.session_state.get("hypotheses", [])
+    prompt = f"""You are given 5 ASR transcription hypotheses. Identify the words in the first hypothesis that are suspicious, meaning they differ from the majority of the other hypotheses or are likely incorrect considering the context. Return the first hypothesis with suspicious words wrapped in <span style="color:red;">word</span> tags for highlighting.
+                Do not output any additional text that is not the highlighted version of the first hypothesis.\n
+                Do not write any explanatory text that is not the highlighted version of the first hypothesis.\n
+                Here are the hypotheses:
+                1. {hypotheses[0]}
+                2. {hypotheses[1]}
+                3. {hypotheses[2]}
+                4. {hypotheses[3]}
+                5. {hypotheses[4]}
+                """
+    if llm_mode == "⚡️Turbo: GPT-4o":
+        llm_model = "gpt-4o"
+    else:
+        llm_model = "gpt-4o-mini"
+    client = OpenAI(api_key=openai.api_key)
+    completion = client.chat.completions.create(
+                model=llm_model,
+                messages=[{"role": "user", "content": prompt}],
+                **{"max_tokens": 250, "temperature": 0.9})
+    highlighted = completion.choices[0].message.content
+
+    st.write("📝 Whisper Output:")
+    st.markdown(highlighted, unsafe_allow_html=True)
     st.checkbox("Do you have in-context error examples?", value=False, key="enable_fewshot")
     error_examples = []
     if st.session_state.get("enable_fewshot"):
@@ -90,7 +113,8 @@ if st.session_state.get("transcript_complete"):
                         "<hypothesis2> the hamlet of white will lights to the west </hypothesis2>\n"
                         "<hypothesis3> the hamlet of whitewell lies to the west</hypothesis3>\n"
                         "<hypothesis4> the hamlet of whitewill lies to the west </hypothesis4>\n"
-                        "<hypothesis5> the hamlet of whiteville likes to the west </hypothesis5>\n")
+                        "<hypothesis5> the hamlet of whiteville likes to the west </hypothesis5>\n"
+                        "Your output: the hamlet of whitewell lies to the west")
         error_examples = st.text_area("Example 1", value=example_text, height=200)
         
     st.session_state.error_examples = error_examples    
