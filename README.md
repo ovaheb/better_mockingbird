@@ -1,6 +1,6 @@
 # better_mockingbird
-
-A Python-based tool inspired by Mockingbird Audio Dubbing Solution. It features a modern UI for recording or uploading audio, performs automatic speech recognition (ASR), and applies advanced error correction using OpenAI GPT-4o—all fully deployed with Streamlit.
+![Demo Screenshot](demo.png)
+A Python-based tool inspired by Mockingbird Audio Dubbing Solution. It features a modern UI for recording or uploading audio, performs automatic speech recognition (ASR), and applies advanced error correction using OpenAI GPT-4o, fully deployed using Streamlit.
 
 ## Project Description
 
